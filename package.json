@@ -1,0 +1,33 @@
+{
+  "name": "hubot-astroscrum",
+  "description": "An easy way to keep track of your daily scrum with your team!",
+  "version": "0.0.0",
+  "author": [
+    "Morgan McDaris <morganmcdaris@gmail.com>",
+    "JP Silvashy <jpsilvashy@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "hubot",
+    "hubot-scripts",
+    "hubot-astroscrum",
+    "scrum"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/astroscrum/hubot-astroscrum.git"
+  },
+  "bugs": {
+    "url": "https://github.com/astroscrum/hubot-astroscrum/issues"
+  },
+  "dependencies": {
+    "coffee-script": "~1.6",
+    "cron": "1.0.5",
+    "handlebars": "^2.0.0",
+    "hubot-auth": "^1.2.0",
+    "redis": "^0.12.1",
+    "time": "0.11.0",
+    "request": ""
+  },
+  "main": "index.coffee"
+}
