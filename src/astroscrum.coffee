@@ -43,13 +43,13 @@ CronJob = require("cron").CronJob
 Handlebars = require('handlebars')
 
 get = (path, handler) ->
-  console.log robot.brain.get "astroscrum-auth-token"
+  # console.log robot.brain.get "astroscrum-auth-token"
   options = { url: url + path, headers: "X-Auth-Token": token }
   request.get options, (err, res, body) ->
     handler JSON.parse(body)
 
 post = (path, data, handler) ->
-  console.log robot.brain.get "astroscrum-auth-token"
+  # console.log robot.brain.get "astroscrum-auth-token"
   options = { url: url + path, json: data, headers: "X-Auth-Token": token }
   request.post options, (err, res, body) ->
     handler JSON.stringify(body)
