@@ -163,7 +163,7 @@ module.exports = (robot) ->
   robot.brain.on 'loaded', (data) ->
     setup robot, (response) ->
       console.log(response)
-      robot.brain.set "astroscrum-auth-token", response.team.auth_token
+      # robot.brain.set "astroscrum-auth-token", response.team.auth_token
       console.log('Astroscrum team saved!')
 
   robot.respond /scrum players/i, (msg) ->
