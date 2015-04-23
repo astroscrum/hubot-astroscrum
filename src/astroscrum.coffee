@@ -222,16 +222,16 @@ module.exports = (robot) ->
   # Direct message entire team
   robot.router.post "/hubot/astroscrum/team", (req, res) ->
     console.log(req.body)
+    robot.send { room: 'general' }, req.body.message.body
     # robot.emit "prompt", req.body
 
   ##
   # TODO:
   # Direct message specific user
   robot.router.post "/hubot/astroscrum/player/:slack_id", (req, res) ->
-    player = robot.brain.userForId(req.params.slack_id)
-    console.log(player)
     console.log(req.body)
-    # robot.emit "prompt", req.body
+    player = robot.brain.userForId(req.params.slack_id)
+    robot.send { room: player.name }, req.body.message.body
 
   ##
   # FIXME: handle scheduling api-side
