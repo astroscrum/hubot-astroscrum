@@ -160,10 +160,15 @@ templates =
 
 module.exports = (robot) ->
 
+  loaded = false
   robot.brain.on 'loaded', (data) ->
     setup robot, (response) ->
       console.log(response)
-      # robot.brain.set "astroscrum-auth-token", response.team.auth_token
+
+      if loaded == false
+        robot.brain.set "astroscrum-auth-token", response.team.auth_token
+        loaded = true
+
       console.log('Astroscrum team saved!')
 
   robot.respond /scrum players/i, (msg) ->
