@@ -2,28 +2,27 @@
 #   Interface with Astroscrum API
 #
 # Configuration:
-#   HUBOT_ASTROSCRUM_USER
-#   HUBOT_ASTROSCRUM_PASSWORD
+#   HUBOT_URL
+#   HUBOT_ASTROSCRUM_AUTH_TOKEN
+#
+# Options:
 #   HUBOT_ASTROSCRUM_SUBDOMAIN
+#   HUBOT_ASTROSCRUM_URL
 #
 # Commands:
-#   hubot (all) tickets - returns the total count of all unsolved tickets. The 'all' keyword is optional.
-#   hubot new tickets - returns the count of all new (unassigned) tickets
-#   hubot open tickets - returns the count of all open tickets
-#   hubot escalated tickets - returns a count of tickets with escalated tag that are open or pending
-#   hubot pending tickets - returns a count of tickets that are pending
-#   hubot list (all) tickets - returns a list of all unsolved tickets. The 'all' keyword is optional.
-#   hubot list new tickets - returns a list of all new tickets
-#   hubot list open tickets - returns a list of all open tickets
-#   hubot list pending tickets - returns a list of pending tickets
-#   hubot list escalated tickets - returns a list of escalated tickets
-#   hubot ticket <ID> - retuirns information about the specified ticket
+#   hubot join - join your team's daily scrum
+#   hubot players - return all the players on your team
+#   hubot scrum summary - returns the current summary for today
+#   hubot today - what you're doing today, you can have many entries
+#   hubot yesterday - what you did yesterday
+#   hubot blocked - what you are blocked by
+#
 
 request = require('request')
 
-url = process.env.HUBOT_ASTROSCRUM_URL || "https://astroscrum-api.herokuapp.com/v1"
 host = process.env.HUBOT_URL
 token = process.env.HUBOT_ASTROSCRUM_AUTH_TOKEN
+url = process.env.HUBOT_ASTROSCRUM_URL || "https://astroscrum-api.herokuapp.com/v1"
 
 # Default time to tell users to do their scrum
 PROMPT_AT = process.env.HUBOT_SCRUM_PROMPT_AT || '0 0 6 * * *' # 6am everyday
