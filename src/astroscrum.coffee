@@ -20,7 +20,7 @@
 
 request = require('request')
 
-host = process.env.HUBOT_URL
+HOST_URL = process.env.HUBOT_URL || "https://astroscrum-slackbot.herokuapp.com"
 token = process.env.HUBOT_ASTROSCRUM_AUTH_TOKEN
 url = process.env.HUBOT_ASTROSCRUM_URL || "https://astroscrum-api.herokuapp.com/v1"
 
@@ -59,7 +59,7 @@ setup = (robot, handler) ->
     team:
       slack_id: robot.adapter.client.team.id
       name: robot.adapter.client.team.name
-      bot_url: host
+      bot_url: HOST_URL
       timezone: TIMEZONE
       prompt_at: PROMPT_AT
       remind_at: REMIND_AT
