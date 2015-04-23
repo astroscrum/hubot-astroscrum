@@ -21,7 +21,7 @@
 request = require('request')
 
 host = process.env.HUBOT_URL
-token = process.env.HUBOT_ASTROSCRUM_AUTH_TOKEN
+# token = process.env.HUBOT_ASTROSCRUM_AUTH_TOKEN
 url = process.env.HUBOT_ASTROSCRUM_URL || "https://astroscrum-api.herokuapp.com/v1"
 
 # Default time to tell users to do their scrum
@@ -43,20 +43,22 @@ CronJob = require("cron").CronJob
 Handlebars = require('handlebars')
 
 get = (path, handler) ->
+  token = robot.brain.data.get "astroscrum-auth-token"
   options = { url: url + path, headers: "X-Auth-Token": token }
   request.get options, (err, res, body) ->
     handler JSON.parse(body)
 
 post = (path, data, handler) ->
+  token = robot.brain.data.get "astroscrum-auth-token"
   options = { url: url + path, json: data, headers: "X-Auth-Token": token }
   request.post options, (err, res, body) ->
     handler JSON.stringify(body)
 
-setup = (team, handler) ->
+setup = (robot, handler) ->
   data =
     team:
-      slack_id: team.id
-      name: team.name
+      slack_id: robot.adapter.client.team.id
+      name: robot.adapter.client.team.name
       bot_url: host
       timezone: TIMEZONE
       prompt_at: PROMPT_AT
@@ -64,6 +66,7 @@ setup = (team, handler) ->
       summary_at: SUMMARY_AT
 
   post '/team', data, (response) ->
+    robot.brain.data.set "astroscrum-auth-token", response.team.auth_token
     handler JSON.parse(response)
 
 messages =
@@ -159,7 +162,7 @@ templates =
 module.exports = (robot) ->
 
   robot.brain.on 'loaded', (data) ->
-    setup robot.adapter.client.team, (response) ->
+    setup robot, (response) ->
       console.log('Astroscrum team saved!')
 
   robot.respond /scrum players/i, (msg) ->
