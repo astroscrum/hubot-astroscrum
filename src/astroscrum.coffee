@@ -111,17 +111,6 @@ templates =
 
   summary: (scrum) ->
     source = """
-      Team summary for {{scrum.date}}:
-      {{#each scrum.players}}
-      *{{real_name}}*
-      {{#each categories}}
-          {{category}}:
-          {{#each entries}}
-           - {{body}}
-          {{/each}}
-      {{/each}}
-
-      {{/each}}
     """
     template = Handlebars.compile(source)
     template(scrum)
@@ -219,14 +208,16 @@ module.exports = (robot) ->
   # Direct message entire team
   robot.router.post "/hubot/astroscrum/announce", (req, res) ->
     console.log(req.body)
-    robot.send { room: req.body.channel }, req.body.message.body
+    template = Handlebars.compile(req.body.template)
+    robot.send { room: req.body.channel }, template(req.body.data)
     res.send 'OK'
 
   # Direct message specific user
   robot.router.post "/hubot/astroscrum/message", (req, res) ->
     console.log(req.body)
+    template = Handlebars.compile(req.body.template)
     for slack_id in req.body.players
       player = robot.brain.userForId(slack_id)
-      robot.send { room: player.name }, req.body.message.body
+      robot.send { room: player.name }, template(req.body.data)
     res.send 'OK'
 
