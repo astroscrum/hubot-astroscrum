@@ -228,7 +228,7 @@ module.exports = (robot) ->
   ##
   # TODO:
   # Direct message specific user
-  robot.router.post "/hubot/astroscrum/player/:slack_id", (req, res) ->
+  robot.router.post "/hubot/astroscrum/players/:slack_id", (req, res) ->
     console.log(req.body)
     player = robot.brain.userForId(req.params.slack_id)
     robot.send { room: player.name }, req.body.message.body
