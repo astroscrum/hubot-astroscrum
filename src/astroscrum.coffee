@@ -157,6 +157,8 @@ templates =
 
 module.exports = (robot) ->
 
+  ##
+  # TODO: get and set astroscrum-auth-token automatically
   loaded = false
   robot.brain.on 'loaded', (data) ->
     setup robot, (response) ->
@@ -214,20 +216,17 @@ module.exports = (robot) ->
     get '/players/' + msg.envelope.user.id, (response) ->
       robot.send { room: msg.envelope.user.name }, templates.help(response)
 
-  ##
-  # TODO:
   # Direct message entire team
-  robot.router.post "/hubot/astroscrum/team", (req, res) ->
+  robot.router.post "/hubot/astroscrum/announce", (req, res) ->
     console.log(req.body)
     robot.send { room: req.body.channel }, req.body.message.body
     res.send 'OK'
 
-  ##
-  # TODO:
   # Direct message specific user
-  robot.router.post "/hubot/astroscrum/players/:slack_id", (req, res) ->
+  robot.router.post "/hubot/astroscrum/message", (req, res) ->
     console.log(req.body)
-    player = robot.brain.userForId(req.params.slack_id)
-    robot.send { room: player.name }, req.body.message.body
+    for slack_id in req.body.players
+      player = robot.brain.userForId(slack_id)
+      robot.send { room: player.name }, req.body.message.body
     res.send 'OK'
 
