@@ -25,19 +25,16 @@ token = process.env.HUBOT_ASTROSCRUM_AUTH_TOKEN
 url = process.env.HUBOT_ASTROSCRUM_URL || "https://astroscrum-api.herokuapp.com/v1"
 
 # Default time to tell users to do their scrum
-PROMPT_AT = process.env.HUBOT_SCRUM_PROMPT_AT || '0 0 6 * * *' # 6am everyday
+PROMPT_AT = process.env.HUBOT_SCRUM_PROMPT_AT || "0 6 * * * *" # 6am everyday
 
 # Default scrum reminder time
-REMIND_AT = process.env.HUBOT_SCRUM_REMIND_AT || '0 30 11 * * *' # 11am everyday
+REMIND_AT = process.env.HUBOT_SCRUM_REMIND_AT || "30 11 * * * *" # 11:30am everyday
 
 # Send the scrum at 10 am everyday
-SUMMARY_AT = process.env.HUBOT_SCRUM_SUMMARY_AT || '0 0 12 * * *' # noon
+SUMMARY_AT = process.env.HUBOT_SCRUM_SUMMARY_AT || "0 12 * * * *" # noon
 
 # Set to local timezone
 TIMEZONE = process.env.TZ || "America/Los_Angeles"
-
-# Setup cron
-CronJob = require("cron").CronJob
 
 # Handlebars
 Handlebars = require('handlebars')
@@ -233,36 +230,4 @@ module.exports = (robot) ->
     player = robot.brain.userForId(req.params.slack_id)
     robot.send { room: player.name }, req.body.message.body
     res.send 'OK'
-
-  ##
-  # FIXME: handle scheduling api-side
-  # Setup things that need scheduling
-  schedule =
-    prompt: (time) ->
-      new CronJob(time, ->
-        messages.prompt(robot)
-        return
-      , null, true, TIMEZONE)
-
-    remind: (time) ->
-      new CronJob(time, ->
-        messages.reminder(robot)
-        return
-      , null, true, TIMEZONE)
-
-    summary: (time) ->
-      new CronJob(time, ->
-        messages.summary(robot)
-        return
-      , null, true, TIMEZONE)
-
-
-  # Schedule prompt to tell user to do their scrum today
-  schedule.prompt PROMPT_AT
-
-  # Schedule reminder to remind the user they still need to do their scrum
-  schedule.remind REMIND_AT
-
-  # Schedule the end time of the scrum, deliver the summary to the players
-  schedule.summary SUMMARY_AT
 
