@@ -2,16 +2,16 @@
 #   Interface with Astroscrum API
 #
 # Configuration:
-#   HUBOT_URL
 #   HUBOT_ASTROSCRUM_AUTH_TOKEN
+#   HUBOT_URL (usually set by default on heroku)
 #
 # Options:
-#   HUBOT_ASTROSCRUM_SUBDOMAIN
 #   HUBOT_ASTROSCRUM_URL
 #
 # Commands:
-#   hubot join - join your team's daily scrum
-#   hubot players - return all the players on your team
+#   hubot scrum join - join your team's daily scrum
+#   hubot scrum players - return all the players on your team
+#   hubot scrum help - get help on how to do your scrum
 #   hubot scrum summary - returns the current summary for today
 #   hubot today - what you're doing today, you can have many entries
 #   hubot yesterday - what you did yesterday
@@ -94,26 +94,6 @@ templates =
     """
     template = Handlebars.compile(source)
     template(players)
-
-  prompt: (player) ->
-    source = """
-      Hey {{player.name}}, are you ready to do your scrum?! Message me back with `scrum help` if you need any details on how to do your scrum.
-    """
-    template = Handlebars.compile(source)
-    template(player)
-
-  reminder: (player) ->
-    source = """
-      Hey {{player.name}}, you didn't finish your scrum today!
-    """
-    template = Handlebars.compile(source)
-    template(player)
-
-  summary: (scrum) ->
-    source = """
-    """
-    template = Handlebars.compile(source)
-    template(scrum)
 
   join: (player) ->
     console.log(player)
