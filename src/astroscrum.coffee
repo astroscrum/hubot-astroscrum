@@ -65,25 +65,6 @@ setup = (robot, handler) ->
   post '/team', data, (response) ->
     handler JSON.parse(response)
 
-messages =
-  prompt: (robot) ->
-    get '/players', (response) ->
-      for player in response.players
-        get '/players/' + player.slack_id, (response) ->
-          robot.send { room: response.player.name }, templates.prompt(response)
-
-  reminder: (robot) ->
-    get '/players', (response) ->
-      for player in response.players
-        get '/players/' + player.slack_id, (response) ->
-          robot.send { room: response.player.name }, templates.reminder(response)
-
-  summary: (robot) ->
-    get '/players', (playersResponse) ->
-      get '/scrum', (scrumResponse) ->
-        for player in playersResponse.players
-          robot.send { room: player.name }, templates.summary(scrumResponse)
-
 # Templates
 templates =
   players: (players) ->
@@ -94,6 +75,35 @@ templates =
     """
     template = Handlebars.compile(source)
     template(players)
+
+  summary: (resp) ->
+    scrum = resp.scrum
+
+    source = """
+      Scrum Summary: {{date}}
+      {{#each players}}
+        *{{name}}*: ({{points}}) pts
+        {{#each categories}}
+          *{{category}}*:
+          {{#each entries}}
+            - {{body}}: {{points}}
+          {{/each}}
+        {{/each}}
+      {{/each}}
+    """
+
+    source2 = """
+      Scrum Summary: {{date}}
+      {{#each players}}
+        *{{name}}*: ({{points}}) pts
+        {{#each categories}}
+          *{{category}}*:{{#each entries}} {{body}}; {{/each}}
+        {{/each}}
+      {{/each}}
+    """
+
+    template = Handlebars.compile(source2)
+    template(scrum)
 
   join: (player) ->
     console.log(player)
@@ -142,14 +152,6 @@ module.exports = (robot) ->
   robot.respond /scrum players/i, (msg) ->
     get '/players', (response) ->
       robot.send { room: msg.envelope.user.name }, templates.players(response)
-
-  robot.respond /scrum prompt/i, (msg) ->
-    get '/players/' + msg.envelope.user.id, (response) ->
-      robot.send { room: msg.envelope.user.name }, templates.prompt(response)
-
-  robot.respond /scrum reminder/i, (msg) ->
-    get '/players/' + msg.envelope.user.id, (response) ->
-      robot.send { room: msg.envelope.user.name }, templates.reminder(response)
 
   robot.respond /scrum summary/i, (msg) ->
     get '/scrum', (response) ->
