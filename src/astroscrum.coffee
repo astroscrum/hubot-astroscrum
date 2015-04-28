@@ -51,6 +51,13 @@ post = (path, data, handler) ->
   request.post options, (err, res, body) ->
     handler JSON.stringify(body)
 
+del = (path, data, handler) ->
+  # console.log robot.brain.get "astroscrum-auth-token"
+  options = { url: url + path, json: data, headers: "X-Auth-Token": token }
+  request.del options, (err, res, body) ->
+    handler JSON.stringify(body)
+
+
 setup = (robot, handler) ->
   data =
     team:
@@ -121,6 +128,17 @@ templates =
     template = Handlebars.compile(source)
     template(entry)
 
+  del: (entries) ->
+    console.log(entries)
+    source = """
+      Okay, I deleted these entries:
+      {{#each entries}}
+        • {{category}}: {{body}} (-{{points}})
+      {{/each}}
+    """
+    template = Handlebars.compile(source)
+    template(entries)
+
   help: (player) ->
     console.log(player)
     source = """
@@ -156,6 +174,17 @@ module.exports = (robot) ->
   robot.respond /scrum summary/i, (msg) ->
     get '/scrum', (response) ->
       robot.send { room: msg.envelope.user.name }, templates.summary(response)
+
+  robot.respond /scrum clear/i, (msg) ->
+    player = robot.brain.userForId(msg.envelope.user.id)
+    data =
+      entries:
+        slack_id: player.id
+        category: null
+
+    del '/entries', data, (response) ->
+      response = JSON.parse(response)
+      robot.send { room: msg.envelope.user.name }, templates.del(response)
 
   robot.respond /scrum join/i, (msg) ->
     player = robot.brain.userForId(msg.envelope.user.id)
