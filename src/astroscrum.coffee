@@ -18,10 +18,7 @@
 #   hubot blocked - what you are blocked by
 #
 
-request = require('request')
-
 HOST_URL = process.env.HUBOT_URL || "https://astroscrum-slackbot.herokuapp.com"
-token = process.env.HUBOT_ASTROSCRUM_AUTH_TOKEN
 url = process.env.HUBOT_ASTROSCRUM_URL || "https://astroscrum-api.herokuapp.com/v1"
 
 # Default time to tell users to do their scrum
@@ -36,26 +33,44 @@ SUMMARY_AT = process.env.HUBOT_SCRUM_SUMMARY_AT || "0 12 * * * *" # noon
 # Set to local timezone
 TIMEZONE = process.env.TZ || "America/Los_Angeles"
 
+
 # Handlebars
 Handlebars = require('handlebars')
 
+# HTTP Requests
+Request = require('request')
+
+# Setup Redis
+if process.env.REDIS_URL
+  redis_url = require('url').parse(process.env.REDIS_URL)
+  redis = require('redis').createClient(redis_url.port, redis_url.hostname)
+  redis.auth redis_url.auth.split(':')[1]
+else
+  redis = require('redis').createClient()
+
 get = (path, handler) ->
-  # console.log robot.brain.get "astroscrum-auth-token"
-  options = { url: url + path, headers: "X-Auth-Token": token }
-  request.get options, (err, res, body) ->
-    handler JSON.parse(body)
+  redis.get 'hubot:storage', (err, reply) ->
+    token = JSON.parse(reply)["_private"]["astroscrum-auth-token"]
+
+    options = { url: url + path, headers: "X-Auth-Token": token }
+    Request.get options, (err, res, body) ->
+      handler JSON.parse(body)
 
 post = (path, data, handler) ->
-  # console.log robot.brain.get "astroscrum-auth-token"
-  options = { url: url + path, json: data, headers: "X-Auth-Token": token }
-  request.post options, (err, res, body) ->
-    handler JSON.stringify(body)
+  redis.get 'hubot:storage', (err, reply) ->
+    token = JSON.parse(reply)["_private"]["astroscrum-auth-token"]
+
+    options = { url: url + path, json: data, headers: "X-Auth-Token": token }
+    Request.post options, (err, res, body) ->
+      handler JSON.stringify(body)
 
 del = (path, data, handler) ->
-  # console.log robot.brain.get "astroscrum-auth-token"
-  options = { url: url + path, json: data, headers: "X-Auth-Token": token }
-  request.del options, (err, res, body) ->
-    handler JSON.stringify(body)
+  redis.get 'hubot:storage', (err, reply) ->
+    token = JSON.parse(reply)["_private"]["astroscrum-auth-token"]
+
+    options = { url: url + path, json: data, headers: "X-Auth-Token": token }
+    Request.del options, (err, res, body) ->
+      handler JSON.stringify(body)
 
 
 setup = (robot, handler) ->
@@ -70,7 +85,10 @@ setup = (robot, handler) ->
       summary_at: SUMMARY_AT
 
   post '/team', data, (response) ->
-    handler JSON.parse(response)
+    response = JSON.parse(response)
+    handler response
+    console.log "hubot-astroscrum connected to:", url
+    console.log "team:", response
 
 # Templates
 templates =
@@ -155,17 +173,16 @@ templates =
 module.exports = (robot) ->
 
   ##
-  # TODO: get and set astroscrum-auth-token automatically
-  loaded = false
+  # Gets auth token and saves it to Redis
   robot.brain.on 'loaded', (data) ->
     setup robot, (response) ->
-      console.log(response)
+      authToken = robot.brain.get "astroscrum-auth-token"
 
-      if loaded == false
+      if authToken
+        console.log('Astroscrum team saved!', authToken)
+      else
         robot.brain.set "astroscrum-auth-token", response.team.auth_token
-        loaded = true
 
-      console.log('Astroscrum team saved!')
 
   robot.respond /scrum players/i, (msg) ->
     get '/players', (response) ->
