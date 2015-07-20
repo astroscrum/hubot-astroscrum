@@ -51,7 +51,6 @@ else
 get = (path, handler) ->
   redis.get 'hubot:storage', (err, reply) ->
     token = JSON.parse(reply)["_private"]["astroscrum-auth-token"]
-
     options = { url: url + path, headers: "X-Auth-Token": token }
     Request.get options, (err, res, body) ->
       handler JSON.parse(body)
@@ -59,15 +58,20 @@ get = (path, handler) ->
 post = (path, data, handler) ->
   redis.get 'hubot:storage', (err, reply) ->
     token = JSON.parse(reply)["_private"]["astroscrum-auth-token"]
-
     options = { url: url + path, json: data, headers: "X-Auth-Token": token }
     Request.post options, (err, res, body) ->
+      handler JSON.stringify(body)
+
+put = (path, data, handler) ->
+  redis.get 'hubot:storage', (err, reply) ->
+    token = JSON.parse(reply)["_private"]["astroscrum-auth-token"]
+    options = { url: url + path, json: data, headers: "X-Auth-Token": token }
+    Request.put options, (err, res, body) ->
       handler JSON.stringify(body)
 
 del = (path, data, handler) ->
   redis.get 'hubot:storage', (err, reply) ->
     token = JSON.parse(reply)["_private"]["astroscrum-auth-token"]
-
     options = { url: url + path, json: data, headers: "X-Auth-Token": token }
     Request.del options, (err, res, body) ->
       handler JSON.stringify(body)
@@ -191,6 +195,17 @@ module.exports = (robot) ->
   robot.respond /scrum summary/i, (msg) ->
     get '/scrum', (response) ->
       robot.send { room: msg.envelope.user.name }, templates.summary(response)
+
+  robot.respond /scrum notifications (on|off)/i, (msg) ->
+    player = robot.brain.userForId(msg.envelope.user.id)
+    # notifications = if msg.match[1] == "on" then true else false
+    data =
+      player:
+        notifications: false # notifications
+
+    put '/players/' + player.id, data, (response) ->
+      response = JSON.parse(response)
+      robot.send { room: msg.envelope.user.name }, "notifications are off" # templates.join(response)
 
   robot.respond /scrum clear/i, (msg) ->
     player = robot.brain.userForId(msg.envelope.user.id)
