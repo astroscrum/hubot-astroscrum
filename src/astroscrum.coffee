@@ -221,14 +221,9 @@ module.exports = (robot) ->
   robot.respond /scrum join/i, (msg) ->
     player = robot.brain.userForId(msg.envelope.user.id)
     data =
-      player:
-        slack_id: player.id
-        name: player.name
-        real_name: player.real_name
-        email: player.email_address
-        password: player.id
+      player: player
 
-    post '/players', data, (response) ->
+    post '/join/slack', data, (response) ->
       response = JSON.parse(response)
       robot.send { room: msg.envelope.user.name }, templates.join(response)
 
