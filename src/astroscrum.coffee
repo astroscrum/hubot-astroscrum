@@ -190,9 +190,8 @@ module.exports = (robot) ->
   ##
   # Handle initial user creation
   robot.respond /scrum join/i, (msg) ->
-    player = robot.brain.userForId(msg.envelope.user.id)
     data =
-      player: player
+      player: msg.envelope.user
 
     post '/slack/join', data, (response) ->
       response = JSON.parse(response)
