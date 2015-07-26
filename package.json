@@ -1,7 +1,7 @@
 {
   "name": "hubot-astroscrum",
   "description": "An easy way to keep track of your daily scrum with your team!",
-  "version": "0.1.8",
+  "version": "0.1.81",
   "author": [
     "Morgan McDaris <morganmcdaris@gmail.com>",
     "JP Silvashy <jpsilvashy@gmail.com>"

@@ -187,6 +187,16 @@ module.exports = (robot) ->
       else
         robot.brain.set "astroscrum-auth-token", response.team.auth_token
 
+  ##
+  # Handle initial user creation
+  robot.respond /scrum join/i, (msg) ->
+    player = robot.brain.userForId(msg.envelope.user.id)
+    data =
+      player: player
+
+    post '/slack/join', data, (response) ->
+      response = JSON.parse(response)
+      robot.send { room: msg.envelope.user.name }, templates.join(response)
 
   robot.respond /scrum players/i, (msg) ->
     get '/players', (response) ->
@@ -217,15 +227,6 @@ module.exports = (robot) ->
     del '/entries', data, (response) ->
       response = JSON.parse(response)
       robot.send { room: msg.envelope.user.name }, templates.del(response)
-
-  robot.respond /scrum join/i, (msg) ->
-    player = robot.brain.userForId(msg.envelope.user.id)
-    data =
-      player: player
-
-    post '/join/slack', data, (response) ->
-      response = JSON.parse(response)
-      robot.send { room: msg.envelope.user.name }, templates.join(response)
 
   robot.respond /(today|yesterday|blocked) (.*)/i, (msg) ->
     player = robot.brain.userForId(msg.envelope.user.id)
