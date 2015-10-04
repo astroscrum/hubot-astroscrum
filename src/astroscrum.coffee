@@ -111,15 +111,20 @@ templates =
     console.log(scrum)
 
     source = """
-      Scrum Summary: {{date}}
-      {{#players}}
-      {{#filed}}
-        *{{name}}*: ({{points}}) pts
-        {{#categories}}
-          *{{category}}*:{{#entries}} {{body}}; {{/entries}}
-        {{/categories}}
-      {{/filed}}
-      {{/players}}
+    Team summary for {{date}}:
+    {{#players}}
+    {{#filed}}
+    *{{real_name}}* ({{points}})
+    {{#categories}}
+      {{category}}: {{#each entries}}{{body}}; {{/each}}
+    {{/categories}}
+    {{/filed}}
+
+    Not filed:
+    {{#not_filed}}
+    *{{real_name}}* ({{points}})
+    {{/not_filed}}
+    {{/players}}
     """
 
     template = Handlebars.compile(source)
@@ -161,6 +166,12 @@ templates =
        • *today*
        • *yesterday*
        • *blocked* (optional)
+
+      You can find additional help:
+       • in our Slack channel slack.astroscum.com
+       • in Github issues github.com/astroscrum/hubot-astroscrum/issues
+       • by checking status.astroscrum.com to see if their is a system issue
+       • by tweeting to us twitter.com/astroscrum
     """
     template = Handlebars.compile(source)
     template(player)
