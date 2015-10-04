@@ -98,9 +98,9 @@ setup = (robot, handler) ->
 templates =
   players: (players) ->
     source = """
-      {{#each players}}
+      {{#players}}
       *{{real_name}}* ({{points}})
-      {{/each}}
+      {{/players}}
     """
     template = Handlebars.compile(source)
     template(players)
@@ -116,7 +116,7 @@ templates =
       {{#filed}}
         *{{name}}*: ({{points}}) pts
         {{#categories}}
-          *{{category}}*:{{#entries}} {{body}}; {{/each}}
+          *{{category}}*:{{#entries}} {{body}}; {{/entries}}
         {{/categories}}
       {{/filed}}
       {{/players}}
@@ -145,9 +145,9 @@ templates =
     console.log(entries)
     source = """
       Okay, I deleted these entries:
-      {{#each entries}}
+      {{#entries}}
         • {{category}}: {{body}} (-{{points}})
-      {{/each}}
+      {{/entries}}
     """
     template = Handlebars.compile(source)
     template(entries)
