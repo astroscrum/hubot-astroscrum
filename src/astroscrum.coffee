@@ -122,7 +122,7 @@ templates =
       {{/players}}
     """
 
-    template = Handlebars.compile(source2)
+    template = Handlebars.compile(source)
     template(scrum)
 
   join: (player) ->
