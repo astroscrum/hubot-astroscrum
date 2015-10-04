@@ -168,7 +168,7 @@ templates =
        • *blocked* (optional)
 
       You can find additional help:
-       • in our Slack channel slack.astroscum.com
+       • in our Slack channel slack.astroscrum.com
        • in Github issues github.com/astroscrum/hubot-astroscrum/issues
        • by checking status.astroscrum.com to see if their is a system issue
        • by tweeting to us twitter.com/astroscrum
