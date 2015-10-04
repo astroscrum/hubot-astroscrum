@@ -112,25 +112,14 @@ templates =
 
     source = """
       Scrum Summary: {{date}}
-      {{#each players}}
+      {{#players}}
+      {{#filed}}
         *{{name}}*: ({{points}}) pts
-        {{#each categories}}
-          *{{category}}*:
-          {{#each entries}}
-            - {{body}}: {{points}}
-          {{/each}}
-        {{/each}}
-      {{/each}}
-    """
-
-    source2 = """
-      Scrum Summary: {{date}}
-      {{#each players}}
-        *{{name}}*: ({{points}}) pts
-        {{#each categories}}
-          *{{category}}*:{{#each entries}} {{body}}; {{/each}}
-        {{/each}}
-      {{/each}}
+        {{#categories}}
+          *{{category}}*:{{#entries}} {{body}}; {{/each}}
+        {{/categories}}
+      {{/filed}}
+      {{/players}}
     """
 
     template = Handlebars.compile(source2)
