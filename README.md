@@ -1,5 +1,7 @@
 # Hubot Astroscrum API adapter
 
+[![Join the Astroscrum chat](https://astroscrum-slackin.herokuapp.com/badge.svg)](https://astroscrum-slackin.herokuapp.com/)
+
 This Hubot script allows hubot to interface directly to the Astroscrum API
 
 ## Commands
