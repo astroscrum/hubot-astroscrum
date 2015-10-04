@@ -22,13 +22,13 @@ HOST_URL = process.env.HUBOT_URL || "https://astroscrum-slackbot.herokuapp.com"
 url = process.env.HUBOT_ASTROSCRUM_URL || "https://astroscrum-api.herokuapp.com/v1"
 
 # Default time to tell users to do their scrum
-PROMPT_AT = process.env.HUBOT_SCRUM_PROMPT_AT || "0 6 * * * *" # 6am everyday
+PROMPT_AT = process.env.HUBOT_SCRUM_PROMPT_AT || "0 6 * * * 1-5" # 6am everyday
 
 # Default scrum reminder time
-REMIND_AT = process.env.HUBOT_SCRUM_REMIND_AT || "30 11 * * * *" # 11:30am everyday
+REMIND_AT = process.env.HUBOT_SCRUM_REMIND_AT || "30 11 * * * 1-5" # 11:30am everyday
 
 # Send the scrum at 10 am everyday
-SUMMARY_AT = process.env.HUBOT_SCRUM_SUMMARY_AT || "0 12 * * * *" # noon
+SUMMARY_AT = process.env.HUBOT_SCRUM_SUMMARY_AT || "0 12 * * * 1-5" # noon
 
 # Set to local timezone
 TIMEZONE = process.env.TZ || "America/Los_Angeles"
@@ -107,6 +107,8 @@ templates =
 
   summary: (resp) ->
     scrum = resp.scrum
+
+    console.log(scrum)
 
     source = """
       Scrum Summary: {{date}}
@@ -258,4 +260,3 @@ module.exports = (robot) ->
       player = robot.brain.userForId(slack_id)
       robot.send { room: player.name }, template(req.body.data)
     res.send 'OK'
-
